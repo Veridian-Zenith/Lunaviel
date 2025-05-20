@@ -7,8 +7,10 @@ const event_system = @import("event_system.zig");
 const perf = @import("../drivers/perf_monitor.zig");
 const power = @import("power_manager.zig");
 const syscall_table = @import("syscall_table.zig");
-const fs = @import("../fs/controller.zig");
+const fs = @import("../fs/hookt_fs.zig");
 const network = @import("../net/stack.zig");
+const cache_manager = @import("../cpu/cache_manager.zig");
+const cpu_init = @import("../cpu/cpu_init.zig");
 
 pub const ExecutionCore = struct {
     scheduler: *scheduler.Scheduler,
@@ -16,24 +18,30 @@ pub const ExecutionCore = struct {
     system_pulse: *pulse.SystemPulse,
     perf_monitor: perf.PerformanceMonitor,
     power_manager: power.PowerManager,
+    cache_mgr: *cache_manager.CacheManager,
+    filesystem: ?*fs.HooktFS,
     fs_controller: fs.FSController,
     network_stack: network.NetworkStack,
     last_optimization: u64,
     active_cores: u8,
+    harmony_threshold: f32,
 
     const OPTIMIZATION_INTERVAL: u64 = 1000; // Optimize every 1000 ticks
 
-    pub fn init(sched: *scheduler.Scheduler, sys_pulse: *pulse.SystemPulse) ExecutionCore {
+    pub fn init(sched: *scheduler.Scheduler, sys_pulse: *pulse.SystemPulse, cache_mgr: *cache_manager.CacheManager) ExecutionCore {
         var core = ExecutionCore{
             .scheduler = sched,
             .optimizer = optimizer.FlowOptimizer.init(),
             .system_pulse = sys_pulse,
             .perf_monitor = perf.PerformanceMonitor.init(),
             .power_manager = undefined,
+            .cache_mgr = cache_mgr,
+            .filesystem = null,
             .fs_controller = fs.FSController.init(allocator, sys_pulse),
             .network_stack = network.NetworkStack.init(allocator, sys_pulse),
             .last_optimization = 0,
             .active_cores = 6, // Based on i3-1215U
+            .harmony_threshold = 0.5,
         };
 
         // Initialize performance monitoring
@@ -49,11 +57,27 @@ pub const ExecutionCore = struct {
         return core;
     }
 
+    pub fn initializeFilesystem(self: *ExecutionCore, filesystem: *fs.HooktFS) void {
+        self.filesystem = filesystem;
+
+        // Initialize filesystem wave state with system pulse
+        filesystem.wave_state = .{
+            .amplitude = self.system_pulse.global_wave.amplitude,
+            .phase = self.system_pulse.global_wave.phase,
+            .frequency = 1.0,
+            .resonance = 0.7, // Start with good resonance for stability
+        };
+    }
+
     pub fn execute(self: *ExecutionCore) void {
         const current_time = timing.getCurrentTime();
 
         // Evolve system state
         self.system_pulse.evolve();
+
+        // Update cache policies and state
+        self.cache_mgr.updateCachePolicy(current_time);
+        self.cache_mgr.optimizeCacheUsage();
 
         // Update power states
         self.power_manager.updatePowerStates();
@@ -104,6 +128,29 @@ pub const ExecutionCore = struct {
                 },
             });
         };
+    }
+
+    pub fn needsHarmonization(self: *ExecutionCore) bool {
+        // Check system resonance
+        if (self.system_pulse.resonance < self.harmony_threshold) {
+            return true;
+        }
+
+        // Check filesystem resonance if available
+        if (self.filesystem) |fs_inst| {
+            if (fs_inst.wave_state.resonance < self.harmony_threshold) {
+                return true;
+            }
+        }
+
+        // Check per-core wave states
+        for (self.system_pulse.core_waves) |wave| {
+            if (wave.resonance < self.harmony_threshold) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     fn optimizeExecution(self: *ExecutionCore) void {
@@ -165,7 +212,33 @@ pub const ExecutionCore = struct {
         }
     }
 
-    fn harmonizeSystem(self: *ExecutionCore) void {
+    fn harmonizeFilesystem(self: *ExecutionCore) void {
+        if (self.filesystem) |fs_inst| {
+            // Adjust filesystem wave state to improve resonance
+            fs_inst.wave_state.phase = self.system_pulse.global_wave.phase;
+
+            // Gradually adjust amplitude based on system load
+            const target_amplitude = @floatToInt(u8,
+                @intToFloat(f32, self.system_pulse.global_wave.amplitude) * 0.8
+            );
+
+            if (fs_inst.wave_state.amplitude < target_amplitude) {
+                fs_inst.wave_state.amplitude += 5;
+            } else if (fs_inst.wave_state.amplitude > target_amplitude) {
+                fs_inst.wave_state.amplitude -= 5;
+            }
+
+            // Update resonance based on I/O performance
+            fs_inst.wave_state.resonance =
+                (fs_inst.wave_state.resonance * 0.9) +
+                (self.system_pulse.resonance * 0.1);
+        }
+    }
+
+    pub fn harmonizeSystem(self: *ExecutionCore) void {
+        // First harmonize filesystem if available
+        self.harmonizeFilesystem();
+
         // Adjust system parameters based on current state
         const resonance = self.system_pulse.resonance;
 

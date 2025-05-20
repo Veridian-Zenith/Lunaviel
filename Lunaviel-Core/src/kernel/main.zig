@@ -7,11 +7,15 @@ const syscall = @import("syscall.zig");
 const ExecutionCore = @import("execution_core.zig").ExecutionCore;
 const scheduler = @import("../process/scheduler.zig");
 const pulse = @import("pulse.zig");
+const bootloader = @import("../boot/bootloader.zig");
+const hookt_fs = @import("../fs/hookt_fs.zig");
+const nvme = @import("../drivers/nvme_driver.zig");
 
 var phys_mem_manager: PhysicalMemoryManager = undefined;
 var virt_mem_manager: VirtualMemoryManager = undefined;
 var kernel_heap: heap.HeapAllocator = undefined;
 var global_execution_core: ExecutionCore = undefined;
+var root_filesystem: ?*hookt_fs.HooktFS = null;
 
 /// Get the global execution core instance
 pub fn getExecutionCore() *ExecutionCore {
@@ -19,29 +23,64 @@ pub fn getExecutionCore() *ExecutionCore {
 }
 
 /// The main kernel execution loop.
-pub fn kernel_main() void {
+pub fn kernel_main(boot_info: *bootloader.BootInfo) void {
+    // Initialize core memory management
     initMemoryManagement() catch |err| {
-        // Handle initialization error
         @panic("Failed to initialize memory management");
     };
 
     // Initialize scheduler and system pulse
     var sched = scheduler.Scheduler.init();
-    var sys_pulse = pulse.SystemPulse.init();
 
-    // Initialize execution core
-    global_execution_core = ExecutionCore.init(&sched, &sys_pulse);
+    // Initialize CPU features and cache
+    try cpu_init.initializeCPU();
+    const cache_mgr = boot_info.cache_manager orelse {
+        @panic("Cache manager not initialized");
+    };
+
+    global_execution_core = ExecutionCore.init(&sched, &boot_info.system_pulse, cache_mgr);
 
     // Initialize system calls
     syscall.init();
 
-    // Main kernel loop
+    // Initialize NVMe and HooktFS if available
+    if (boot_info.nvme_info) |nvme_info| {
+        var nvme_driver = nvme.NVMeDriver.init(nvme_info) catch |err| {
+            @panic("Failed to initialize NVMe driver");
+        };
+
+        var fs = hookt_fs.HooktFS.init(&nvme_driver, std.heap.page_allocator) catch |err| {
+            @panic("Failed to initialize HooktFS");
+        };
+
+        // Format if needed (first boot)
+        if (needsFormatting(&fs)) {
+            fs.format() catch |err| {
+                @panic("Failed to format HooktFS");
+            };
+        }
+
+        root_filesystem = &fs;
+    }
+
+    // Main kernel loop with wave-harmonized execution
     while (true) {
         global_execution_core.execute();
-        stabilizeExecution();
+        boot_info.system_pulse.evolve();
+
+        if (global_execution_core.needsHarmonization()) {
+            global_execution_core.harmonizeSystem();
+        }
+
+        // Process any pending events
         processEvents();
-        adjustSystemLoad();
     }
+}
+
+fn needsFormatting(fs: *hookt_fs.HooktFS) bool {
+    const superblock = fs.driver.readBlocks(0, 1) catch return true;
+    const magic = @ptrCast(*align(1) const u32, &superblock[0]).*;
+    return magic != 0x486F6B74; // "Hokt" magic number
 }
 
 /// Entry point required by the linker to start execution.

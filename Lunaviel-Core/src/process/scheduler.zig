@@ -1,6 +1,7 @@
 const std = @import("std");
 const pulse = @import("../kernel/pulse.zig");
 const timing = @import("../kernel/timing.zig");
+const event_system = @import("../kernel/event_system.zig");
 
 pub const TaskState = enum {
     Awakening,   // Task is being initialized
@@ -8,6 +9,7 @@ pub const TaskState = enum {
     Resonating,  // Task is waiting for resources
     Dormant,     // Task is sleeping
     Dissolving,  // Task is being terminated
+    IO_Wait,     // Task is waiting for I/O operations
 };
 
 pub const TaskFlow = struct {
@@ -15,6 +17,8 @@ pub const TaskFlow = struct {
     phase: f32,       // Position in system pulse cycle
     resonance: f32,   // Harmony with system rhythm
     core_affinity: ?u8, // Preferred CPU core
+    io_intensity: u8,  // 0-100 scale for I/O operations intensity
+    last_io_time: u64, // Last recorded I/O operation time
 };
 
 pub const Task = struct {
@@ -36,6 +40,8 @@ pub const Task = struct {
                 .phase = 0.0,
                 .resonance = 1.0,
                 .core_affinity = null,
+                .io_intensity = 0,
+                .last_io_time = 0,
             },
             .stack_ptr = stack,
             .entry_point = entry,
@@ -51,6 +57,7 @@ pub const Scheduler = struct {
     current_task: ?*Task,
     system_pulse: pulse.SystemPulse,
     last_schedule_time: u64,
+    io_threshold: u8,
 
     pub fn init(allocator: std.mem.Allocator) Scheduler {
         return .{
@@ -58,6 +65,7 @@ pub const Scheduler = struct {
             .current_task = null,
             .system_pulse = pulse.SystemPulse.init(),
             .last_schedule_time = 0,
+            .io_threshold = 70,  // Threshold for I/O intensity
         };
     }
 
@@ -70,6 +78,18 @@ pub const Scheduler = struct {
         // Update task flows
         for (self.tasks.items) |*task| {
             self.updateTaskFlow(task);
+
+            // Update task states based on I/O operations
+            if (task.flow.io_intensity > self.io_threshold) {
+                if (task.state != .IO_Wait) {
+                    task.state = .IO_Wait;
+                    task.flow.resonance *= 0.8;  // Reduce resonance during heavy I/O
+                }
+            } else if (task.state == .IO_Wait) {
+                task.state = .Awakening;
+                // Gradually restore resonance
+                task.flow.resonance = (task.flow.resonance * 0.9) + 0.1;
+            }
         }
 
         // Select next task based on resonance
@@ -133,9 +153,17 @@ pub const Scheduler = struct {
     }
 
     fn calculateTaskScore(self: *Scheduler, task: *Task) f32 {
-        var score = @intToFloat(f32, task.flow.amplitude) / 100.0;
-        score *= task.flow.resonance;
-        score *= @intToFloat(f32, 255 - task.priority) / 255.0;
+        const priority_weight: f32 = 0.4;
+        const resonance_weight: f32 = 0.3;
+        const io_weight: f32 = 0.3;
+
+        const priority_score = @intToFloat(f32, 255 - task.priority) / 255.0;
+        const resonance_score = task.flow.resonance;
+        const io_score = 1.0 - (@intToFloat(f32, task.flow.io_intensity) / 100.0);
+
+        var score = (priority_score * priority_weight) +
+                    (resonance_score * resonance_weight) +
+                    (io_score * io_weight);
 
         if (task.flow.core_affinity) |core| {
             const core_wave = &self.system_pulse.core_waves[core];
