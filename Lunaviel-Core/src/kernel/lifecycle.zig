@@ -5,3 +5,11 @@ pub fn manageLifecycle(task_id: usize) void {
         task_list[task_id].state = .Dormant;
     }
 }
+
+pub fn stabilizeExecution() void {
+    for (task_list) |task| {
+        if (task.state == .Active and system_load > 90) {
+            task.state = .Sleeping;
+        }
+    }
+}
