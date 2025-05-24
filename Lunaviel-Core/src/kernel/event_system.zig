@@ -1,5 +1,3 @@
-const std = @import("std");
-
 pub const EventType = enum {
     Interrupt,
     Timer,
@@ -19,6 +17,11 @@ pub const EventType = enum {
     NetworkDisharmony,
     NetworkInterface,
     NetworkConnection,
+    DriverRegistered,
+    DriverUnregistered,
+    DriverStateChanged,
+    DriverError,
+    DriverIO,
 };
 
 pub const EventPriority = enum(u8) {
@@ -69,131 +72,40 @@ pub const Event = struct {
             code: u32,
             data: u64,
         },
+        fs_mount: struct {
+            path: []const u8,
+            fs_type: []const u8,
+            resonance: f32,
+        },
+        fs_unmount: struct {
+            path: []const u8,
+        },
+        fs_error: struct {
+            path: []const u8,
+            error_code: u32,
+        },
+        network_error: struct {
+            error_code: u32,
+            operation: []const u8,
+        },
+        network: struct {
+            interface: []const u8,
+            resonance: f32,
+        },
+        driver_event: struct {
+            id: u16,
+            type: u8,
+        },
+        driver_state: struct {
+            id: u16,
+            old_state: u8,
+            new_state: u8,
+            resonance: f32,
+        },
+        driver_io: struct {
+            id: u16,
+            operation: enum { Read, Write, Control },
+            status: u32,
+        },
     },
 };
-
-pub const EventQueue = struct {
-    const MAX_EVENTS = 256;
-
-    events: [MAX_EVENTS]Event,
-    head: usize,
-    tail: usize,
-    size: usize,
-
-    pub fn init() EventQueue {
-        return EventQueue{
-            .events = undefined,
-            .head = 0,
-            .tail = 0,
-            .size = 0,
-        };
-    }
-
-    pub fn push(self: *EventQueue, event: Event) bool {
-        if (self.size >= MAX_EVENTS) return false;
-
-        self.events[self.tail] = event;
-        self.tail = (self.tail + 1) % MAX_EVENTS;
-        self.size += 1;
-
-        return true;
-    }
-
-    pub fn pop(self: *EventQueue) ?Event {
-        if (self.size == 0) return null;
-
-        const event = self.events[self.head];
-        self.head = (self.head + 1) % MAX_EVENTS;
-        self.size -= 1;
-
-        return event;
-    }
-
-    pub fn peek(self: *EventQueue) ?Event {
-        if (self.size == 0) return null;
-        return self.events[self.head];
-    }
-
-    pub fn peekPriority(self: *EventQueue) ?Event {
-        if (self.size == 0) return null;
-
-        var highest_priority: ?Event = null;
-        var highest_priority_index: usize = undefined;
-
-        var i: usize = 0;
-        while (i < self.size) : (i += 1) {
-            const index = (self.head + i) % MAX_EVENTS;
-            const event = self.events[index];
-
-            if (highest_priority == null or @enumToInt(event.priority) < @enumToInt(highest_priority.?.priority)) {
-                highest_priority = event;
-                highest_priority_index = index;
-            }
-        }
-
-        // If we found a higher priority event, swap it to the front
-        if (highest_priority) |event| {
-            if (highest_priority_index != self.head) {
-                self.events[highest_priority_index] = self.events[self.head];
-                self.events[self.head] = event;
-            }
-        }
-
-        return highest_priority;
-    }
-
-    pub fn clear(self: *EventQueue) void {
-        self.head = 0;
-        self.tail = 0;
-        self.size = 0;
-    }
-};
-
-pub const EventHandler = struct {
-    queue: EventQueue,
-
-    pub fn init() EventHandler {
-        return EventHandler{
-            .queue = EventQueue.init(),
-        };
-    }
-
-    pub fn handleEvent(self: *EventHandler, event: Event) void {
-        switch (event.type) {
-            .Interrupt => self.handleInterrupt(event.data.interrupt),
-            .Timer => self.handleTimer(event.data.timer),
-            .KeyboardInput => self.handleKeyboard(event.data.keyboard),
-            .DiskIO => self.handleDisk(event.data.disk),
-            .ProcessCreated, .ProcessTerminated => self.handleProcess(event.data.process),
-            .MemoryLow => self.handleMemory(event.data.memory),
-            .SystemOverload => self.handleSystem(event.data.system),
-            .HardwareError => self.handleHardware(event.data.hardware),
-            .UserDefined => self.handleUser(event.data.user),
-        }
-    }
-
-    fn handleInterrupt(self: *EventHandler, data: anytype) void {
-        // Handle hardware interrupts
-        if (data.error_code) |code| {
-            // Handle error conditions
-            self.queue.push(.{
-                .type = .HardwareError,
-                .priority = .Critical,
-                .timestamp = getCurrentTime(),
-                .data = .{ .hardware = .{
-                    .device_id = 0,
-                    .error_code = @truncate(u32, code),
-                }},
-            });
-        }
-    }
-
-    // Additional handler implementations...
-};
-
-fn getCurrentTime() u64 {
-    // Implement proper timestamp generation
-    return @intCast(u64, asm volatile ("rdtsc"
-        : [ret] "={eax}" (-> u32)
-    ));
-}
