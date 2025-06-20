@@ -1,0 +1,27 @@
+[package]
+name = "lunaviel-core"
+version = "0.1.0"
+edition = "2024"
+authors = ["Lunaviel Team <core@lunaviel.io>"]
+license = "GPL-3.0-or-later"
+build = "build.rs"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+bitflags = "*"
+spin = "*"
+x86_64 = "*"
+uefi = "*"
+acpi = "*"
+log = "*"
+volatile = "*"
+linked_list_allocator = "*"
+hashbrown = "*"
+uguid = "2.2.1"
+# Removed crossbeam, futures-util, and lazy_static due to std/alloc requirements or lack of no_std support.
+# Use only no_std-compatible crates for kernel development. For async or collections, prefer heapless, spin, or custom implementations.
+
+[build-dependencies]
+target_build_utils = "*"

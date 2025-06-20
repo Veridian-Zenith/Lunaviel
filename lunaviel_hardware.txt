@@ -1,0 +1,159 @@
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           39 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  8
+On-line CPU(s) list:                     0-7
+Vendor ID:                               GenuineIntel
+Model name:                              12th Gen Intel(R) Core(TM) i3-1215U
+CPU family:                              6
+Model:                                   154
+Thread(s) per core:                      2
+Core(s) per socket:                      6
+Socket(s):                               1
+Stepping:                                4
+CPU(s) scaling MHz:                      68%
+CPU max MHz:                             4400.0000
+CPU min MHz:                             400.0000
+BogoMIPS:                                4992.00
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb intel_pt sha_ni xsaveopt xsavec xgetbv1 xsaves split_lock_detect user_shstk avx_vnni dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req hfi vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize arch_lbr ibt flush_l1d arch_capabilities
+Virtualization:                          VT-x
+L1d cache:                               224 KiB (6 instances)
+L1i cache:                               320 KiB (6 instances)
+L2 cache:                                4.5 MiB (3 instances)
+L3 cache:                                10 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-7
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Mitigation; Clear Register File
+Vulnerability Retbleed:                  Not affected
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI BHI_DIS_S
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsx async abort:           Not affected
+
+NAME        MODEL                                      SIZE TYPE
+sda         External USB 3.0                         476.9G disk
+└─sda1                                               476.9G part
+nvme0n1     KBG50ZNV256G KIOXIA                      238.5G disk
+├─nvme0n1p1                                              1G part
+└─nvme0n1p2                                          237.5G part
+
+00:00.0 Host bridge [0600]: Intel Corporation Device [8086:4609] (rev 04)
+00:02.0 VGA compatible controller [0300]: Intel Corporation Alder Lake-UP3 GT1 [UHD Graphics] [8086:46b3] (rev 0c)
+00:04.0 Signal processing controller [1180]: Intel Corporation Alder Lake Innovation Platform Framework Processor Participant [8086:461d] (rev 04)
+00:06.0 PCI bridge [0604]: Intel Corporation 12th Gen Core Processor PCI Express x4 Controller #0 [8086:464d] (rev 04)
+00:06.2 PCI bridge [0604]: Intel Corporation 12th Gen Core Processor PCI Express x4 Controller #2 [8086:463d] (rev 04)
+00:08.0 System peripheral [0880]: Intel Corporation 12th Gen Core Processor Gaussian & Neural Accelerator [8086:464f] (rev 04)
+00:0d.0 USB controller [0c03]: Intel Corporation Alder Lake-P Thunderbolt 4 USB Controller [8086:461e] (rev 04)
+00:14.0 USB controller [0c03]: Intel Corporation Alder Lake PCH USB 3.2 xHCI Host Controller [8086:51ed] (rev 01)
+00:14.2 RAM memory [0500]: Intel Corporation Alder Lake PCH Shared SRAM [8086:51ef] (rev 01)
+00:15.0 Serial bus controller [0c80]: Intel Corporation Alder Lake PCH Serial IO I2C Controller #0 [8086:51e8] (rev 01)
+00:16.0 Communication controller [0780]: Intel Corporation Alder Lake PCH HECI Controller [8086:51e0] (rev 01)
+00:1c.0 PCI bridge [0604]: Intel Corporation Device [8086:51be] (rev 01)
+00:1c.7 PCI bridge [0604]: Intel Corporation Alder Lake PCH-P PCI Express Root Port #9 [8086:51bf] (rev 01)
+00:1e.0 Communication controller [0780]: Intel Corporation Alder Lake PCH UART #0 [8086:51a8] (rev 01)
+00:1e.2 Serial bus controller [0c80]: Intel Corporation Alder Lake SPI Controller [8086:51aa] (rev 01)
+00:1f.0 ISA bridge [0601]: Intel Corporation Alder Lake PCH eSPI Controller [8086:5182] (rev 01)
+00:1f.3 Multimedia audio controller [0401]: Intel Corporation Alder Lake PCH-P High Definition Audio Controller [8086:51c8] (rev 01)
+00:1f.4 SMBus [0c05]: Intel Corporation Alder Lake PCH-P SMBus Host Controller [8086:51a3] (rev 01)
+00:1f.5 Serial bus controller [0c80]: Intel Corporation Alder Lake-P PCH SPI Controller [8086:51a4] (rev 01)
+02:00.0 Non-Volatile memory controller [0108]: KIOXIA Corporation NVMe SSD Controller BG5 (DRAM-less) [1e0f:000c]
+03:00.0 Network controller [0280]: Realtek Semiconductor Co., Ltd. RTL8852BE PCIe 802.11ax Wireless Network Controller [10ec:b852]
+04:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd. RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 15)
+
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 002: ID 0408:5483 Quanta Computer, Inc. HP HD Camera
+Bus 003 Device 003: ID 0bda:b85c Realtek Semiconductor Corp. Bluetooth Radio
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 004 Device 002: ID 0480:a006 Toshiba America Inc UAS Controller
+
+Node                  Generic               SN                   Model                                    Namespace  Usage                      Format           FW Rev  
+--------------------- --------------------- -------------------- ---------------------------------------- ---------- -------------------------- ---------------- --------
+/dev/nvme0n1          /dev/ng0n1            73FPC53GQH4U         KBG50ZNV256G KIOXIA                      0x1        256.06  GB / 256.06  GB    512   B +  0 B   HP02AN00
+
+[    2.784744] input: HP WMI hotkeys as /devices/virtual/input/input11
+[    2.823316] input: SYNA30E5:00 06CB:CEAC Mouse as /devices/pci0000:00/0000:00:15.0/i2c_designware.0/i2c-15/i2c-SYNA30E5:00/0018:06CB:CEAC.0001/input/input12
+[    2.823371] input: SYNA30E5:00 06CB:CEAC Touchpad as /devices/pci0000:00/0000:00:15.0/i2c_designware.0/i2c-15/i2c-SYNA30E5:00/0018:06CB:CEAC.0001/input/input13
+[    2.823507] hid-multitouch 0018:06CB:CEAC.0001: input,hidraw0: I2C HID v1.00 Mouse [SYNA30E5:00 06CB:CEAC] on i2c-SYNA30E5:00
+[    3.141210] snd_hda_codec_realtek ehdaudio0D0:    inputs:
+[    3.358076] input: sof-hda-dsp Mic as /devices/pci0000:00/0000:00:1f.3/skl_hda_dsp_generic/sound/card0/input15
+[    3.358155] input: sof-hda-dsp Headphone as /devices/pci0000:00/0000:00:1f.3/skl_hda_dsp_generic/sound/card0/input16
+[    3.358230] input: sof-hda-dsp HDMI/DP,pcm=3 as /devices/pci0000:00/0000:00:1f.3/skl_hda_dsp_generic/sound/card0/input17
+[    3.358280] input: sof-hda-dsp HDMI/DP,pcm=4 as /devices/pci0000:00/0000:00:1f.3/skl_hda_dsp_generic/sound/card0/input18
+[    3.358363] input: sof-hda-dsp HDMI/DP,pcm=5 as /devices/pci0000:00/0000:00:1f.3/skl_hda_dsp_generic/sound/card0/input19
+[    4.620650] elogind[1337]: Watching system buttons on /dev/input/event2 (Power Button)
+[    4.621232] elogind[1337]: Watching system buttons on /dev/input/event1 (Lid Switch)
+[    4.621244] elogind[1337]: Watching system buttons on /dev/input/event0 (Sleep Button)
+[    4.623040] elogind[1337]: Watching system buttons on /dev/input/event5 (Intel HID events)
+[    4.623054] elogind[1337]: Watching system buttons on /dev/input/event6 (Intel HID 5 button array)
+[    4.623068] elogind[1337]: Watching system buttons on /dev/input/event3 (AT Translated Set 2 keyboard)
+[    4.623083] elogind[1337]: Watching system buttons on /dev/input/event8 (HP WMI hotkeys)
+[18907.029925] elogind[1337]: Watching system buttons on /dev/input/event2 (Power Button)
+[18907.047877] elogind[1337]: Watching system buttons on /dev/input/event1 (Lid Switch)
+[18907.055379] elogind[1337]: Watching system buttons on /dev/input/event0 (Sleep Button)
+[18907.085946] elogind[1337]: Watching system buttons on /dev/input/event5 (Intel HID events)
+[18907.086502] elogind[1337]: Watching system buttons on /dev/input/event6 (Intel HID 5 button array)
+[18907.089806] elogind[1337]: Watching system buttons on /dev/input/event3 (AT Translated Set 2 keyboard)
+[18907.127583] elogind[1337]: Watching system buttons on /dev/input/event8 (HP WMI hotkeys)
+
+Battery 0: Not charging, 96%
+Battery 0: design capacity 4059 mAh, last full capacity 3448 mAh = 84%
+Adapter 0: on-line
+Thermal 0: ok, 29.0 degrees C
+Thermal 0: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Thermal 0: trip point 1 switches to mode passive at temperature 128.0 degrees C
+Thermal 1: ok, 36.0 degrees C
+Thermal 1: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Thermal 2: ok, 0.0 degrees C
+Thermal 2: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Thermal 3: ok, 25.0 degrees C
+Thermal 3: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Thermal 3: trip point 1 switches to mode passive at temperature 102.0 degrees C
+Thermal 4: ok, 39.0 degrees C
+Thermal 4: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Thermal 5: ok, 36.0 degrees C
+Thermal 5: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Thermal 6: ok, 37.0 degrees C
+Thermal 6: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Thermal 7: ok, 44.0 degrees C
+Thermal 7: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Thermal 7: trip point 1 switches to mode hot at temperature 100.0 degrees C
+Thermal 8: ok, 36.0 degrees C
+Thermal 8: trip point 0 switches to mode critical at temperature 128.0 degrees C
+Cooling 0: Processor 0 of 3
+Cooling 1: Processor 0 of 3
+Cooling 2: SEN2 no state information available
+Cooling 3: Processor 0 of 3
+Cooling 4: TCPU no state information available
+Cooling 5: Processor 0 of 3
+Cooling 6: x86_pkg_temp no state information available
+Cooling 7: Processor 0 of 3
+Cooling 8: Processor 0 of 3
+Cooling 9: SEN1 no state information available
+Cooling 10: Processor 0 of 3
+Cooling 11: SEN6 no state information available
+Cooling 12: intel_powerclamp 0 of 100
+Cooling 13: INT3400 Thermal no state information available
+Cooling 14: TCPU_PCI no state information available
+Cooling 15: Processor 0 of 3
+
+BootCurrent: 0001
+Timeout: 0 seconds
+BootOrder: 0001,0005
+Boot0001* Lunaviel (Zen)	HD(1,GPT,102655f9-9a5f-410c-8c68-6b4da72bee9f,0x800,0x200000)/\EFI\Lunaviel (Zen)\grubx64.efi0400000049535048
+Boot0005* Toshiba External USB 3.0 2012110456284	PciRoot(0x0)/Pci(0x14,0x0)/USB(14,0)4eac0881119f594d850ee21a522c59b21180010049535048
+
+UEFI: yes
