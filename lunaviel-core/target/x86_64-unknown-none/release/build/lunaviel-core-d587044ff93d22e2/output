@@ -1,3 +1,0 @@
-cargo:rustc-env=TARGET=x86_64-unknown-none
-cargo:rustc-link-search=/run/media/dae/DaeDev/git/Lunaviel/lunaviel-core/target/x86_64-unknown-none/release/build/lunaviel-core-d587044ff93d22e2/out
-cargo:rerun-if-changed=linker.ld
