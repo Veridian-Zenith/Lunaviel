@@ -1,7 +1,7 @@
 # Lunaviel Core Kernel Development Plan
 **Owner:** Dae Euhwa
 **Organization:** Veridian Zenith
-**Last Updated:** Di 01 Juli 2025 04:04
+**Last Updated:** Wed 02 July 2025 07:56
 **Target Hardware:** HP ProBook 450 G9 (12th Gen Intel Core i3-1215U, Alder Lake-U)
 **Architecture:** x86_64 with 39-bit physical, 48-bit virtual addressing
 **Current Status:** PCI enumeration in progress, core architecture complete
@@ -9,7 +9,7 @@
 ## Contributors
 | Name | Role | Contact |
 |------|------|---------|
-| Dae Euhwa | Lead Developer | dae@veridianzenith.com |
+| Dae Euhwa | Lead Developer | daedaevibin@naver.com |
 
 ## Development Timeline
 
