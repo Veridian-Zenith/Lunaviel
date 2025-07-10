@@ -1,0 +1,88 @@
+;;; ============================================================================
+;;; pci.obn — PCI Enumeration via ECAM (Enhanced Configuration Access Mechanism)
+;;; ============================================================================
+;;; Author: Dae Euhwa
+;;; License: AGPLv3 + VCL1.0
+;;; ============================================================================
+;;; Scans PCI configuration space using ECAM and records all accessible devices.
+;;; Supports multi-function detection and stores metadata for driver matching.
+;;; ============================================================================
+
+(defconst ECAM-BASE #xE0000000)
+(defconst ECAM-BUS-SHIFT 20)
+(defconst ECAM-DEV-SHIFT 15)
+(defconst ECAM-FUNC-SHIFT 12)
+
+(struct pci-device
+  bus dev func
+  vendor-id device-id
+  class-code subclass prog-if
+  header-type)
+
+(defvar *pci-devices* (make-list 0))
+
+(defun ecam-addr (bus dev func offset)
+  "Compute physical memory-mapped config space address for given PCI triple."
+  (+ ECAM-BASE
+     (<< bus ECAM-BUS-SHIFT)
+     (<< dev ECAM-DEV-SHIFT)
+     (<< func ECAM-FUNC-SHIFT)
+     offset))
+
+(defun pci-read16 (bus dev func offset)
+  "Read a 16-bit value from PCI config space."
+  (memu16 (ecam-addr bus dev func offset)))
+
+(defun pci-read8 (bus dev func offset)
+  "Read an 8-bit value from PCI config space."
+  (memu8 (ecam-addr bus dev func offset)))
+
+(defun pci-scan-fn (bus dev func)
+  "Scan a single PCI function and register device if valid."
+  (let ((vendor (pci-read16 bus dev func #x00)))
+    (unless (= vendor #xFFFF)
+      (let ((device (pci-read16 bus dev func #x02))
+            (class  (pci-read8  bus dev func #x0B))
+            (subcl  (pci-read8  bus dev func #x0A))
+            (prog   (pci-read8  bus dev func #x09))
+            (hdr    (pci-read8  bus dev func #x0E)))
+        (push *pci-devices*
+              (make-pci-device
+               :bus bus :dev dev :func func
+               :vendor-id vendor :device-id device
+               :class-code class :subclass subcl
+               :prog-if prog :header-type hdr))))))
+
+(defun pci-scan-dev (bus dev)
+  "Scan a PCI device (and its functions if multi-function)."
+  (let ((vendor (pci-read16 bus dev 0 #x00)))
+    (unless (= vendor #xFFFF)
+      (pci-scan-fn bus dev 0)
+      (let ((hdr (pci-read8 bus dev 0 #x0E)))
+        (when (not (= (logand hdr #x80) 0))  ; Bit 7 = Multi-function device
+          (loop for func from 1 to 7 do
+            (pci-scan-fn bus dev func)))))))
+
+(defun pci-enumerate ()
+  "Enumerate all PCI devices on all buses and store them in *pci-devices*."
+  (loop for bus from 0 to 255 do
+    (loop for dev from 0 to 31 do
+      (pci-scan-dev bus dev))))
+
+;; Optional: for debugging purposes
+(defun pci-print-device (dev)
+  (format t "~&[PCI] Bus:~2,'0X Dev:~2,'0X Func:~1,'0X ~
+              Vendor:~4,'0X Device:~4,'0X Class:~2,'0X Sub:~2,'0X IF:~2,'0X~%"
+          (pci-device-bus dev)
+          (pci-device-dev dev)
+          (pci-device-func dev)
+          (pci-device-vendor-id dev)
+          (pci-device-device-id dev)
+          (pci-device-class-code dev)
+          (pci-device-subclass dev)
+          (pci-device-prog-if dev)))
+
+(defun pci-list ()
+  "Print all detected PCI devices."
+  (dolist (dev *pci-devices*)
+    (pci-print-device dev)))

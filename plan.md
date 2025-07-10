@@ -1,7 +1,7 @@
 # Lunaviel Core Kernel Development Plan
 **Owner:** Dae Euhwa
 **Organization:** Veridian Zenith
-**Last Updated:** Wed 02 July 2025 07:56
+**Last Updated:** Mi 02 Juli 2025 07:52
 **Target Hardware:** HP ProBook 450 G9 (12th Gen Intel Core i3-1215U, Alder Lake-U)
 **Architecture:** x86_64 with 39-bit physical, 48-bit virtual addressing
 **Current Status:** PCI enumeration in progress, core architecture complete
@@ -11,50 +11,50 @@
 |------|------|---------|
 | Dae Euhwa | Lead Developer | daedaevibin@naver.com |
 
-## Development Timeline
-
-### Phase 1: Core System (Completed)
-| Task | Completion Date | Technical Details |
-|------|-----------------|-------------------|
-| Project Structure | Di 10 Juni 2025 | UEFI-first boot, Forth shell foundation |
-| Core Architecture | Do 12 Juni 2025 | Paging, IDT, interrupt handling, heap management |
-| Driver Framework | Fr 13 Juni 2025 | OBNC driver structure with Lisp hooks |
-
-### Phase 2: Hardware Integration (In Progress)
-| Task | Target Date | Status | Technical Focus |
-|------|------------|--------|----------------|
-| PCI Enumeration | Do 19 Juni 2025 | In Progress | Device detection, IRQ routing |
-| NVMe SSD Driver | Fr 20 Juni 2025 | In Progress | Kioxia BG5 controller support |
-| Ethernet Driver | Sa 21 Juni 2025 | In Progress | RTL8168 controller implementation |
-| WiFi Driver | So 22 Juni 2025 | In Progress | RTL8852BE firmware handling |
-| Audio Driver | Mo 23 Juni 2025 | In Progress | Intel SOF integration |
-| Camera Driver | Mo 23 Juni 2025 | In Progress | Quanta UVC support |
-| Bluetooth | Di 24 Juni 2025 | In Progress | Realtek USB implementation |
-| USB/Thunderbolt | Mi 25 Juni 2025 | In Progress | xHCI controller support |
-| ACPI/Battery | Mi 25 Juni 2025 | In Progress | Thermal management |
-| Graphics | Do 26 Juni 2025 | In Progress | Intel UHD framebuffer |
-
-### Phase 3: System Services
-| Task | Target Date | Status | Technical Focus |
-|------|------------|--------|----------------|
-| LunaFS | Fr 27 Juni 2025 | In Progress | NVMe-native filesystem |
-| FAT Support | Fr 27 Juni 2025 | In Progress | UEFI boot compatibility |
-| Logging | Sa 28 Juni 2025 | In Progress | Serial/Forth ringbuffer |
-| Scheduler | So 29 Juni 2025 | In Progress | OBNC cooperative tasks |
-| Syscalls | Mo 30 Juni 2025 | In Progress | OBNC-Lisp interface |
-| Userland Loader | Di 01 Juli 2025 | Planned | SBCL stub loader |
-| QEMU Testing | Di 01 Juli 2025 | Planned | Automated test framework |
-| Hardware Bring-up | Mi 02 Juli 2025 | Planned | Real device testing |
-
-## Technical Architecture
-
+## Documentation Plan
 ```mermaid
 graph TD
-    A[Gforth Core] -->|Boot| B[OBNC Drivers]
-    B -->|Runtime| C[SBCL Userland]
-    C -->|Storage| D[LunaFS]
-    D -->|Hardware| E[PCI Devices]
-    E -->|Hardware Events| A
+    A[Development] --> B[Inline Code Documentation]
+    B --> C[API Documentation]
+    C --> D[User Manuals]
+    D --> E[Developer Guides]
+```
+
+### Documentation Components
+1. **Inline Documentation**
+   - Complete code comments for all functions
+   - Parameter and return value documentation
+   - Usage examples in header comments
+   - Target: 100% coverage of public interfaces
+
+2. **API Documentation**
+   - Structured reference for all system calls
+   - Driver interface specifications
+   - Hardware abstraction layer documentation
+   - Format: Markdown with consistent structure
+
+3. **User Manuals**
+   - System administration guide
+   - Configuration reference
+   - Troubleshooting guide
+   - Target audience: System administrators
+
+4. **Developer Guides**
+   - Architecture overview
+   - Driver development guide
+   - Porting guide for new hardware
+   - Contribution guidelines
+
+### Documentation Timeline
+| Component | Duration | Responsible |
+|-----------|----------|-------------|
+| Inline Docs | Ongoing | Developers |
+| API Reference | 3 days | Dae Euhwa |
+| User Manual | 5 days | Dae Euhwa |
+| Developer Guide | 7 days | Dae Euhwa |
+
+## Development Timeline
+
 ```
 
 ## Current Focus Areas
